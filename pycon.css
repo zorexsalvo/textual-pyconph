@@ -1,0 +1,29 @@
+Day {
+  layout: horizontal;
+  align-horizontal: center;
+  background: $boost;
+  margin: 2;
+  min-width: 50;
+  padding: 1;
+}
+
+Button {
+  background: rgb(255, 173, 57);
+}
+
+
+.active {
+  background: rgb(26,40,81);
+}
+
+#day1-table {
+  display: none;
+}
+
+#day2-table {
+  display: none;
+}
+
+.day-active {
+  display: block !important;
+}
