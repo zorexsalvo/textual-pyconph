@@ -1,17 +1,14 @@
+
+from rich.table import Table
+
 from textual.app import App, ComposeResult
-from textual.containers import Container
-from textual.widgets import Button, Header, Footer, Static, Markdown, DataTable
+from textual.widgets import Button, Header, Footer, Static, Markdown
 
 
-class Day(Static):
-
-    def compose(self) -> ComposeResult:
-        yield Button("Day 1", id="day1-button", classes="day-button", variant="warning")
-        yield Button("Day 2", id="day2-button", classes="day-button", variant="warning")
+COLUMNS = ("Time", "Program", "Speaker", "Track")
 
 
 SCHEDULE_1 = [
-    ("Time", "Program", "Speaker", "Track"),
     ("8:00am - 9:00am", "Registration", "", "Online"),
     ("9:00am - 9:30am", "Opening Remarks", "", "[Track 1] Online"),
     ("9:30am - 10:30am", "Keynote 1: What's New in Python", "Mike Driscoll", "[Track 1] Online"),
@@ -32,7 +29,6 @@ SCHEDULE_1 = [
 ]
 
 SCHEDULE_2 = [
-    ("Time", "Program", "Speaker", "Track"),
     ("8:00am - 9:00am", "Registration", "", "Muralla Ballroom, The Bayleaf Hotel"),
     ("9:00am - 9:30am", "Opening Remarks", "", "[Track 1] Muralla Ballroom, The Bayleaf Hotel"),
     ("9:30am - 10:45am", "Keynote 3: The Zen of Programming - A personal journey towards writing beautiful code", "Sander Hoogendoorn", "[Track 1] Muralla Ballroom, The Bayleaf Hotel"),
@@ -48,8 +44,29 @@ SCHEDULE_2 = [
     ("4:30pm - 4:45pm", "Break", "", "The Bayleaf Hotel"),
     ("4:45pm - 5:30pm", "PyTunes", "", "The Bayleaf Hotel"),
     ("5:30pm - 6:00pm", "Games and Closing Remarks", "", "The Bayleaf Hotel"),
-
 ]
+
+
+def get_schedule(title, schedule):
+    table = Table(title=title)
+
+    table.add_column(COLUMNS[0], justify="right", style="cyan", no_wrap=True)
+    table.add_column(COLUMNS[1], style="cyan", no_wrap=True)
+    table.add_column(COLUMNS[2], style="cyan", no_wrap=True)
+    table.add_column(COLUMNS[3], justify="right", style="green")
+
+    for sched in schedule:
+        table.add_row(*sched)
+
+    return table
+
+
+class Day(Static):
+
+    def compose(self) -> ComposeResult:
+        yield Button("Day 1", id="day1-button", classes="day-button", variant="warning")
+        yield Button("Day 2", id="day2-button", classes="day-button", variant="warning")
+
 
 
 class PyConPhilipines(App):
@@ -63,13 +80,11 @@ class PyConPhilipines(App):
         """Create child widgets for the app."""
 
         yield Header()
+        yield Markdown("# PyCon Philippines 2023")
+        yield Day()
+        yield Static(get_schedule("Day 1 (February 25)", SCHEDULE_1), id="day1-table") 
+        yield Static(get_schedule("Day 2 (February 26)", SCHEDULE_2), id="day2-table") 
         yield Footer()
-        yield Container(
-            Markdown("# PyCon Philippines 2023"),
-            Day(),
-            DataTable(id="day1-table", fixed_columns=4),
-            DataTable(id="day2-table", fixed_columns=4)
-        )
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
@@ -78,19 +93,8 @@ class PyConPhilipines(App):
     def on_mount(self) -> None:
         day1_button =  self.get_widget_by_id("day1-button")
         day1_button.add_class("active") 
-
         table1 = self.get_widget_by_id("day1-table")
-        table2 = self.get_widget_by_id("day2-table")
         table1.add_class("day-active")
-
-        # Initialize Datatables 
-        rows = iter(SCHEDULE_1)
-        table1.add_columns(*next(rows))
-        table1.add_rows(rows)
-
-        rows = iter(SCHEDULE_2)
-        table2.add_columns(*next(rows))
-        table2.add_rows(rows)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         day1_button =  self.get_widget_by_id("day1-button")

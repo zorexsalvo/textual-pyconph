@@ -24,6 +24,10 @@ Button {
   display: none;
 }
 
+#container {
+  align-horizontal: center;
+}
+
 .day-active {
   display: block !important;
 }
