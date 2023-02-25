@@ -68,7 +68,6 @@ class Day(Static):
         yield Button("Day 2", id="day2-button", classes="day-button", variant="warning")
 
 
-
 class PyConPhilipines(App):
     """A Textual app to show PyCon Philippines 2023 Schedule."""
 
@@ -82,7 +81,7 @@ class PyConPhilipines(App):
         yield Header()
         yield Markdown("# PyCon Philippines 2023")
         yield Day()
-        yield Static(get_schedule("Day 1 (February 25)", SCHEDULE_1), id="day1-table") 
+        yield Static(get_schedule("Day 1 (February 25)", SCHEDULE_1), id="day1-table")
         yield Static(get_schedule("Day 2 (February 26)", SCHEDULE_2), id="day2-table") 
         yield Footer()
 

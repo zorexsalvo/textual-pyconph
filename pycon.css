@@ -18,10 +18,12 @@ Button {
 
 #day1-table {
   display: none;
+  align-horizontal: center;
 }
 
 #day2-table {
   display: none;
+  align-horizontal: center;
 }
 
 #container {
