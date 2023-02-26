@@ -1,4 +1,4 @@
-Day {
+DayButtonGroup {
   layout: horizontal;
   align-horizontal: center;
   background: $boost;
@@ -11,19 +11,24 @@ Button {
   background: rgb(255, 173, 57);
 }
 
-
 .active {
   background: rgb(26,40,81);
+}
+
+DayTable {
+  height: 100;
 }
 
 #day1-table {
   display: none;
   align-horizontal: center;
+  height: 100;
 }
 
 #day2-table {
   display: none;
   align-horizontal: center;
+  height: 100;
 }
 
 #container {
@@ -32,4 +37,15 @@ Button {
 
 .day-active {
   display: block !important;
+}
+
+Sidebar {
+  width: 40;
+  background: $panel;
+  transition: offset 500ms in_out_cubic;
+  layer: overlay;
+}
+
+Sidebar.-hidden {
+  offset-x: -100%;
 }
