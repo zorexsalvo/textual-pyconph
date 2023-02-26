@@ -2,6 +2,7 @@
 from rich.table import Table
 
 from textual.app import App, ComposeResult
+from textual.containers import Container
 from textual.widgets import Button, Header, Footer, Static, Markdown
 
 
@@ -48,7 +49,7 @@ SCHEDULE_2 = [
 
 
 def get_schedule(title, schedule):
-    table = Table(title=title)
+    table = Table(title=title, show_lines=True)
 
     table.add_column(COLUMNS[0], justify="right", style="cyan", no_wrap=True)
     table.add_column(COLUMNS[1], style="cyan", no_wrap=True)
@@ -61,39 +62,105 @@ def get_schedule(title, schedule):
     return table
 
 
-class Day(Static):
+class DayButtonGroup(Static):
 
     def compose(self) -> ComposeResult:
-        yield Button("Day 1", id="day1-button", classes="day-button", variant="warning")
-        yield Button("Day 2", id="day2-button", classes="day-button", variant="warning")
+        yield Button("Day 1 (Online)", id="day1-button", classes="day-button", variant="warning")
+        yield Button("Day 2 (In-Person)", id="day2-button", classes="day-button", variant="warning")
 
+
+class DayTable(Container):
+    def compose(self):
+        yield Static(get_schedule("Day 1 (February 25)", SCHEDULE_1), id="day1-table")
+        yield Static(get_schedule("Day 2 (February 26)", SCHEDULE_2), id="day2-table") 
+
+    def on_mount(self):
+        table1 = self.get_widget_by_id("day1-table")
+        table1.add_class("day-active")
+
+
+class Sponsors(Container):
+    def compose(self):
+        yield Markdown("# Test")
+
+
+
+SPONSORS = """\
+# Keystone Sponsor
+- **Python Software Foundation**
+
+
+# Gold Sponsors
+- **codev**
+- **CodeHappy**
+- **Total Rewards Software**
+
+
+# Silver Sponsors
+- **Torchbox** - Creator of Wagtail
+- **Teach Me Python**
+
+
+# Contributing Partner
+- **Manning**
+- **Python Web Conf**
+- **No Starch Press**
+- **Jet Brains**
+- **Developer Week**
+
+
+# Community Partner
+- **PyTsada**
+- **PizzaPy**
+- **Women Who Code Manila**
+- **Grupo Kalinangan**
+
+"""
+
+
+
+class Sidebar(Container):
+    def compose(self) -> ComposeResult:
+        yield Markdown(SPONSORS)
 
 class PyConPhilipines(App):
     """A Textual app to show PyCon Philippines 2023 Schedule."""
 
     TITLE = "PyCon Philippines"
-    BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
+    BINDINGS = [
+        ("d", "toggle_dark", "Toggle dark mode"),
+        ("b", "toggle_sidebar", "Toggle side bar")
+    ]
     CSS_PATH = "pycon.css"
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
 
         yield Header()
+        yield Sidebar(classes="-hidden")
         yield Markdown("# PyCon Philippines 2023")
-        yield Day()
-        yield Static(get_schedule("Day 1 (February 25)", SCHEDULE_1), id="day1-table")
-        yield Static(get_schedule("Day 2 (February 26)", SCHEDULE_2), id="day2-table") 
+        yield DayButtonGroup() 
+        yield DayTable()
+        yield Sponsors()
         yield Footer()
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
         self.dark = not self.dark
 
+    def action_toggle_sidebar(self) -> None:
+        sidebar = self.query_one(Sidebar)
+        self.set_focus(None)
+        if sidebar.has_class("-hidden"):
+            sidebar.remove_class("-hidden")
+        else:
+            if sidebar.query("*:focus"):
+                self.screen.set_focus(None)
+            sidebar.add_class("-hidden")
+
     def on_mount(self) -> None:
         day1_button =  self.get_widget_by_id("day1-button")
         day1_button.add_class("active") 
-        table1 = self.get_widget_by_id("day1-table")
-        table1.add_class("day-active")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         day1_button =  self.get_widget_by_id("day1-button")
